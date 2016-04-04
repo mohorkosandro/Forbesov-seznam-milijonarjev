@@ -6,7 +6,7 @@ import csv
 import os
 import sys
 
-##################PREDPRIPRAVLJENA KODA SKOPIRANA IZ INTERNETA###########################
+#####################################################################################
 
 def mail():
     cas=str(datetime.now())
@@ -57,10 +57,15 @@ def zajemi (i):
         res=[]
         j=0
         while j<i:
-            if driver.title == "Forbes Welcome":#če se slučajno vmes pojavi "Welcome screen" počakamo, da se stran naloži
+            #če se slučajno vmes pojavi "Welcome screen" počakamo, da se stran naloži
+            if driver.title == "Forbes Welcome":
                 time.sleep(10)
             else:
-                print("Obdelujem {0}".format(''.join([x for x in itertools.takewhile(lambda x: x!="-", driver.title)]).strip()))#izpišemo katero osebo obdelujemo
+                #izpišemo katero osebo obdelujemo
+                print("Obdelujem {0}".format(''.join\
+                                             ([x for x in itertools.takewhile\
+                                               (lambda x: x!="-", driver.title)]).strip()))
+
                 s=driver.find_elements_by_xpath("//*[@id='left_rail']/div[1]/div[1]")#zajamemo podatke
                 mesto=re.findall(r'\w*' + '#' + r'\w*',s[0].text)
                 ime=re.findall('(?<='+''.join(mesto).strip()+')(.*)',s[0].text)
@@ -68,6 +73,8 @@ def zajemi (i):
                 marstat=re.findall('(?<=Marital Status)(.*)',s[0].text)
                 stotrok=re.findall('(?<=Children)(.*)',s[0].text)
                 education=re.findall('(?<=Education)(.*)',s[0].text)
+                izobrazba=''
+                sola=''
                 if education:#polje "education" razdelimo na izobrazbo in šolo
                     izobrazba=''.join(itertools.takewhile(lambda x:x!=',',education[0]))
                     sola=''.join((itertools.dropwhile(lambda x:x!=' ',itertools.dropwhile(lambda x:x!=',',education[0]))))
@@ -77,17 +84,23 @@ def zajemi (i):
                        'število otrok':''.join(stotrok).strip(), \
                        'izobrazba':izobrazba.strip(),\
                        'sola':sola.strip()}]           
-                if j==0:#poiščemo gumb "next", pri prvem iz seznama ni gumba "previous", zato je gumb "next" na drugem mestu kot pri ostalih
+                #poiščemo gumb "next", pri prvem iz seznama ni gumba "previous",
+                #zato je gumb "next" na drugem mestu kot pri ostalih
+                if j==0:                
                     xpath="//*[@id='right_rail']/div[2]/div/a/div"
                 else:
                     xpath="//*[@id='right_rail']/div[2]/div[2]/a/div"
                 try:
-                    driver.find_element_by_xpath(xpath).click()#programatično kliknemo gumb, ki naloži stran z naslednjim milijonarjem
+                    #programatično kliknemo gumb, ki naloži stran z naslednjim milijonarjem
+                    driver.find_element_by_xpath(xpath).click()
                 finally:
                     pass
                 j+=1
     finally:
-        zapisi_tabelo(res, ['mesto', 'ime', 'rezidenca', 'število_otrok', 'izobrazba', 'sola'], 'csv-datoteke/milijonarjidod.csv')#zapišemo tabelo      
+        #zapišemo tabelo 
+        zapisi_tabelo\
+        (res,['mesto', 'ime', 'rezidenca', 'število_otrok', 'izobrazba', 'sola'],\
+        'csv-datoteke/milijonarjidod.csv')     
         mail()
         #ker zajemanje podatkov traja sem dodal še kodo, ki mi bo poslala mail, ko je zajemanje končano
         #!PRED UPORABO JE POTREBNO NASTAVITI USERNAME, PW IN USTREZNE NASLOVE, ker je to pobrisano zaradi zasebnosti

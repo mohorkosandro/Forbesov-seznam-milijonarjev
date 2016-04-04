@@ -45,10 +45,17 @@ try:
     country=driver.find_elements_by_xpath("//*[@id='list-table-body']/tr/td[7]")
     res=[]
     for i in range(len(rank)):
-        premozenje=''.join(itertools.takewhile(lambda x: x!=' ',networth[i].text[1:]))#počistimo besedilo, da dobimo samo premoženje brez ostalih znakov
-        res+=[{'mesto':rank[i].text, 'ime':name[i].text, 'premozenje':premozenje,'starost':age[i].text, 'vir premozenja':source[i].text, 'drzava':country[i].text}]#zapis podatkov kot seznam slovarjev
-    #print (res)
-    zapisi_tabelo(res, ['mesto', 'ime', 'premozenje', 'starost', 'vir_premozenja', 'drzava'], 'csv-datoteke/milijonarji.csv')#shranjevanje csv datoteke
+        #počistimo besedilo, da dobimo samo premoženje brez ostalih znakov
+        premozenje=''.join(itertools.takewhile(lambda x: x!=' ',networth[i].text[1:]))
+        #zapis podatkov kot seznam slovarjev
+        res+=[{'mesto':rank[i].text,\
+               'ime':name[i].text,\
+               'premozenje':premozenje,\
+               'starost':age[i].text,\
+               'vir premozenja':source[i].text,\
+               'drzava':country[i].text}]
+    #shranjevanje csv datoteke
+    zapisi_tabelo(res, ['mesto', 'ime', 'premozenje', 'starost', 'vir_premozenja', 'drzava'], 'csv-datoteke/milijonarji.csv')
 finally:
     print ("Zapiram brskalnik...")
     driver.quit()
